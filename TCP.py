@@ -25,8 +25,8 @@ async def handle_client(reader, writer):
         await writer.wait_closed()
 
 async def main():
-    server = await asyncio.start_server(
-        handle_client, '0.0.0.0', 8881)  # 监听所有接口上的端口8881
+    # 设置服务器监听所有接口的端口8881
+    server = await asyncio.start_server(handle_client, '0.0.0.0', 8881)
 
     addr = server.sockets[0].getsockname()
     print(f"服务器已启动，监听在 {addr}")
@@ -35,4 +35,5 @@ async def main():
         await server.serve_forever()
 
 # 运行主函数
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
