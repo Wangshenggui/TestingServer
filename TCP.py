@@ -21,13 +21,11 @@ async def handle_client(reader, writer):
         print(f"处理客户端 {addr} 时发生错误: {e}")
     finally:
         print(f"客户端 {addr} 断开连接")
-        #writer.close()
+        writer.close()
         await writer.wait_closed()
-        
 
 async def main():
-
-    # 设置服务器监听所有接口的端口8000
+    # 设置服务器监听所有接口的端口8881
     server = await asyncio.start_server(handle_client, '0.0.0.0',8000)
 
     addr = server.sockets[0].getsockname()
