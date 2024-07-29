@@ -12,6 +12,9 @@ async def handle_client(reader, writer):
 
             message = data.decode()  # 解码接收到的数据
             print(f"收到来自 {addr} 的消息: {message}")
+            
+            # 发送消息到 WebSocket 服务器
+            await send_message_to_websocket(message)
 
             # 可选：你可以在这里处理收到的数据或向客户端发送响应
             response = f"消息 '{message}' 已收到"
@@ -23,9 +26,25 @@ async def handle_client(reader, writer):
         print(f"客户端 {addr} 断开连接")
         writer.close()
         await writer.wait_closed()
+        
+# 发送消息到 WebSocket 服务器
+async def send_message_to_websocket(message):
+    if websocket_connection:
+        try:
+            print(f"发送消息到 WebSocket 服务器: {message}")
+            await websocket_connection.send(message)
+        except Exception as e:
+            print(f"发送消息到 WebSocket 服务器时发生错误: {e}")
 
 async def main():
-    # 设置服务器监听所有接口的端口8881
+    server = await asyncio.start_server(
+        handle_client, '172.29.103.118', 8001)
+
+    addr = server.sockets[0].getsockname()
+    print(f"服务器已启动，监听在 {addr}")
+    
+    
+    # 设置服务器监听所有接口的端口8000
     server = await asyncio.start_server(handle_client, '0.0.0.0',8000)
 
     addr = server.sockets[0].getsockname()
