@@ -42,8 +42,8 @@ const broadcastMessage = (message) => {
     }
 };
 
-const wss = new WebSocket.Server({ port: 8880 });
+const wss = new WebSocket.Server({ port: 8000 });
 
 wss.on('connection', handleClient);
 
-console.log("WebSocket 服务器已启动，监听在 172.29.103.118:8880");
+console.log("WebSocket 服务器已启动，监听在 172.29.103.118:8000");
