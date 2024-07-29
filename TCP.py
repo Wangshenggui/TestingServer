@@ -37,8 +37,6 @@ async def send_message_to_websocket(message):
             print(f"发送消息到 WebSocket 服务器时发生错误: {e}")
 
 async def main():
-    server = await asyncio.start_server(
-        handle_client, '172.29.103.118', 8001)
 
     addr = server.sockets[0].getsockname()
     print(f"服务器已启动，监听在 {addr}")
