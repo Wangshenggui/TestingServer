@@ -16,10 +16,13 @@ global_data = None
 # 全局变量，用于存储包含 "lon" 的消息
 lon_message = None
 
+global addr
+
 mutex = threading.Lock()  # 创建一个锁
 
 # 处理 TCP 客户端连接
 async def handle_client(reader, writer):
+    global addr
     addr = writer.get_extra_info('peername')
     print(f"客户端 {addr} 连接成功")
 
@@ -57,16 +60,16 @@ async def handle_client(reader, writer):
 async def broadcast_message_tcp(message):
     for client_writer in connected_clients:
         try:
-            print(f"向 TCP 客户端发送消息: {message}")
+            print(f"向 TCP 客户端{addr}发送消息: {message}")
             client_writer.write(message.encode())
             await client_writer.drain()
         except (ConnectionResetError, ConnectionError) as e:
-            print(f"向 TCP 客户端发送消息时发生连接错误: {e}")
+            print(f"向 TCP 客户端{addr}发送消息时发生连接错误: {e}")
             if client_writer in connected_clients:
                 connected_clients.remove(client_writer)
             client_writer.close()
         except Exception as e:
-            print(f"向 TCP 客户端发送消息时发生错误: {e}")
+            print(f"向 TCP 客户端{addr}发送消息时发生错误: {e}")
 
 # 发送消息到 WebSocket 服务器
 async def send_message_to_websocket(message):
