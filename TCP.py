@@ -97,7 +97,7 @@ async def handle_websocket_message(message):
 # WebSocket 客户端连接和消息处理
 async def websocket_client():
     global websocket_connection
-    uri = "ws://8.137.81.229:8000"
+    uri = "ws://0.0.0.0:8000"
     while True:
         try:
             async with websockets.connect(uri) as websocket:
