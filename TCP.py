@@ -24,7 +24,7 @@ async def handle_client(reader, writer):
         print(f"处理客户端 {addr} 时发生错误: {e}")
     finally:
         print(f"客户端 {addr} 断开连接")
-        writer.close()
+        #writer.close()
         await writer.wait_closed()
         
 # 发送消息到 WebSocket 服务器
