@@ -13,7 +13,7 @@ def connTCP():
         # 连接服务器
         tcp_client_socket.connect((server_ip, server_port))
         #发送订阅指令
-        substr = 'cmd=1&uid=7413cbb074d088ee0cedc516fa1d9e71&topic=led002\r\n'
+        substr = 'cmd=1&uid=7413cbb074d088ee0cedc516fa1d9e71&topic=test\r\n'
         tcp_client_socket.send(substr.encode("utf-8"))
     except:
         time.sleep(2)
@@ -23,13 +23,13 @@ def connTCP():
 def Ping():
     # 发送心跳
     try:
-        keeplive = 'ping\r\n'
+        keeplive = 'nimade'
         tcp_client_socket.send(keeplive.encode("utf-8"))
     except:
         time.sleep(2)
         connTCP()
     #开启定时，30秒发送一次心跳
-    t = threading.Timer(30,Ping)
+    t = threading.Timer(3,Ping)
     t.start()
 
     
