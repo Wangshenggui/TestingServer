@@ -24,13 +24,18 @@ const handleClient = (ws) => {
             console.log(`收到来自客户端 ${addr} 的消息: ${message}`); // 打印收到的消息
             try {
                 const parsedMessage = JSON.parse(message); // 尝试解析收到的 JSON 消息
-                broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
+				
+                // 检查消息是否以 'read' 开头
+                if (parsedMessage.command && parsedMessage.command === 'read') {
+                    // 如果消息的 'command' 字段是 'read'，则读取文件并广播
+                    readDataAndBroadcast();
+                } else {
+                    // 处理普通消息
+                    broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
 
-                // 将解析后的消息保存到文件
-                saveDataToTextFile(parsedMessage);
-
-                // 读取文件中的数据并广播给所有客户端
-                readDataAndBroadcast();
+                    // 将解析后的消息保存到文件
+                    saveDataToTextFile(parsedMessage);
+                }
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
             }
