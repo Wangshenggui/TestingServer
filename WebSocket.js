@@ -19,9 +19,6 @@ const handleClient = (ws) => {
         // 发送连接成功消息给客户端
         ws.send(JSON.stringify({ message: "连接成功！" })); // 发送 JSON 格式的连接成功消息
 
-        // 新客户端连接时广播经纬度信息（如果需要可以解注）
-        // broadcastMessage({ lng: 106.621903, lat: 26.382418 });
-
         // 监听客户端发送的消息
         ws.on('message', (message) => {
             console.log(`收到来自客户端 ${addr} 的消息: ${message}`); // 打印收到的消息
@@ -31,6 +28,9 @@ const handleClient = (ws) => {
 
                 // 将解析后的消息保存到文件
                 saveDataToTextFile(parsedMessage);
+
+                // 读取文件中的数据并广播给所有客户端
+                readDataAndBroadcast();
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
             }
@@ -50,8 +50,10 @@ const handleClient = (ws) => {
 // 广播消息给所有已连接的客户端
 const broadcastMessage = (message) => {
     for (const client of connectedClients) { // 遍历所有已连接的客户端
-        client.send(JSON.stringify(message)); // 发送消息给客户端
-        console.log(`广播消息: ${JSON.stringify(message)}`); // 打印广播的消息
+        if (client.readyState === WebSocket.OPEN) { // 确保客户端连接处于打开状态
+            client.send(JSON.stringify(message)); // 发送消息给客户端
+            console.log(`广播消息: ${JSON.stringify(message)}`); // 打印广播的消息
+        }
     }
 };
 
@@ -79,6 +81,31 @@ const saveDataToTextFile = (data) => {
                 console.log(`数据已保存到文件: ${filePath}`);
             }
         });
+    });
+};
+
+// 读取数据文件并广播到所有客户端
+const readDataAndBroadcast = () => {
+    const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
+    const filePath = path.join(scriptDirectory, 'Data', 'data.txt'); // 构建文件路径
+
+    fs.readFile(filePath, 'utf-8', (err, data) => {
+        if (err) {
+            console.error('读取文件时出错:', err);
+            return;
+        }
+
+        // 使用正则表达式分割 JSON 对象
+        const jsonStrings = data.match(/{[^}]+}/g); // 匹配每个 JSON 对象
+        if (jsonStrings) {
+            jsonStrings.forEach((jsonString) => {
+                const jsonObject = JSON.parse(jsonString); // 解析 JSON 字符串
+                broadcastMessage(jsonObject); // 广播 JSON 对象给所有客户端
+            });
+            console.log('文件中的 JSON 对象已广播给所有客户端');
+        } else {
+            console.log('文件中没有找到有效的 JSON 对象');
+        }
     });
 };
 
