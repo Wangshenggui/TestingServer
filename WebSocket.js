@@ -1,6 +1,18 @@
 const WebSocket = require('ws'); // 引入 WebSocket 库
+const fs = require('fs'); // 引入 fs 模块用于文件操作
+const path = require('path'); // 引入 path 模块用于路径操作
+const os = require('os'); // 引入 os 模块用于获取操作系统信息
 
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
+
+// 获取桌面路径（Windows）
+const getDesktopPath = () => {
+    // 在 Windows 上使用 USERPROFILE 环境变量获取用户主目录
+    const homeDirectory = process.env.USERPROFILE;
+    // 构建桌面路径
+    const desktopPath = path.join(homeDirectory, 'Desktop');
+    return desktopPath;
+};
 
 // 处理新连接的客户端
 const handleClient = (ws) => {
@@ -13,7 +25,7 @@ const handleClient = (ws) => {
         ws.send(JSON.stringify({ message: "连接成功！" })); // 发送 JSON 格式的连接成功消息
 
         // 新客户端连接时广播经纬度信息（如果需要可以解注）
-        //broadcastMessage({ lng: 106.621903, lat: 26.382418 });
+        // broadcastMessage({ lng: 106.621903, lat: 26.382418 });
 
         // 监听客户端发送的消息
         ws.on('message', (message) => {
@@ -21,6 +33,9 @@ const handleClient = (ws) => {
             try {
                 const parsedMessage = JSON.parse(message); // 尝试解析收到的 JSON 消息
                 broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
+
+                // 将解析后的消息保存到文件
+                saveDataToFile(addr, parsedMessage);
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
             }
@@ -43,6 +58,33 @@ const broadcastMessage = (message) => {
         client.send(JSON.stringify(message)); // 发送消息给客户端
         console.log(`广播消息: ${JSON.stringify(message)}`); // 打印广播的消息
     }
+};
+
+// 保存数据到文件
+const saveDataToFile = (clientAddr, data) => {
+    const desktopPath = getDesktopPath(); // 获取桌面路径
+    const directoryPath = path.join(desktopPath, 'Data'); // 构建桌面上 Data 文件夹的路径
+    const filePath = path.join(directoryPath, `${clientAddr.replace(':', '_')}.json`); // 文件路径
+
+    // 确保文件夹存在
+    fs.mkdir(directoryPath, { recursive: true }, (err) => {
+        if (err) {
+            console.error('创建文件夹失败:', err);
+            return;
+        }
+
+        // 将数据转换为 JSON 字符串
+        const jsonData = JSON.stringify(data, null, 2);
+
+        // 将数据写入文件，追加模式
+        fs.appendFile(filePath, jsonData + '\n', (err) => {
+            if (err) {
+                console.error(`写入文件 ${filePath} 时出错:`, err);
+            } else {
+                console.log(`数据已保存到文件: ${filePath}`);
+            }
+        });
+    });
 };
 
 // 创建一个 WebSocket 服务器，监听在端口 8001
