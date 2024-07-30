@@ -1,17 +1,12 @@
 const WebSocket = require('ws'); // 引入 WebSocket 库
 const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
-const os = require('os'); // 引入 os 模块用于获取操作系统信息
 
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
 
-// 获取桌面路径（Windows）
-const getDesktopPath = () => {
-    // 在 Windows 上使用 USERPROFILE 环境变量获取用户主目录
-    const homeDirectory = process.env.USERPROFILE;
-    // 构建桌面路径
-    const desktopPath = path.join(homeDirectory, 'Desktop');
-    return desktopPath;
+// 获取运行文件的目录路径
+const getScriptDirectory = () => {
+    return __dirname; // 使用 __dirname 获取当前脚本所在的目录路径
 };
 
 // 处理新连接的客户端
@@ -62,8 +57,8 @@ const broadcastMessage = (message) => {
 
 // 保存数据到文件
 const saveDataToFile = (clientAddr, data) => {
-    const desktopPath = getDesktopPath(); // 获取桌面路径
-    const directoryPath = path.join(desktopPath, 'Data'); // 构建桌面上 Data 文件夹的路径
+    const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
+    const directoryPath = path.join(scriptDirectory, 'Data'); // 构建 Data 文件夹的路径
     const filePath = path.join(directoryPath, `${clientAddr.replace(':', '_')}.json`); // 文件路径
 
     // 确保文件夹存在
