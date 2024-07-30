@@ -69,7 +69,7 @@ const broadcastMessage = (message) => {
 const saveDataToTextFile = (data) => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const directoryPath = path.join(scriptDirectory, 'Data'); // 构建 Data 文件夹的路径
-    const filePath = path.join(directoryPath, 'data.txt'); // 文本文件路径
+    const filePath = path.join(directoryPath, 'data.csv'); // 文本文件路径
 
     // 确保文件夹存在
     fs.mkdir(directoryPath, { recursive: true }, (err) => {
