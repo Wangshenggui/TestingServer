@@ -1,6 +1,7 @@
 const WebSocket = require('ws'); // 引入 WebSocket 库
 const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
+const { parse } = require('json2csv'); // 引入 json2csv 模块用于 JSON 转 CSV
 
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
 
@@ -30,7 +31,7 @@ const handleClient = (ws) => {
                 broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
 
                 // 将解析后的消息保存到文件
-                saveDataToFile(addr, parsedMessage);
+                saveDataToCSV(parsedMessage);
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
             }
@@ -55,11 +56,11 @@ const broadcastMessage = (message) => {
     }
 };
 
-// 保存数据到文件
-const saveDataToFile = (clientAddr, data) => {
+// 保存数据到 CSV 文件
+const saveDataToCSV = (data) => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const directoryPath = path.join(scriptDirectory, 'Data'); // 构建 Data 文件夹的路径
-    const filePath = path.join(directoryPath, `${clientAddr.replace(':', '_')}.json`); // 文件路径
+    const filePath = path.join(directoryPath, 'data.csv'); // CSV 文件路径
 
     // 确保文件夹存在
     fs.mkdir(directoryPath, { recursive: true }, (err) => {
@@ -68,11 +69,16 @@ const saveDataToFile = (clientAddr, data) => {
             return;
         }
 
-        // 将数据转换为 JSON 字符串
-        const jsonData = JSON.stringify(data, null, 2);
+        // 检查 CSV 文件是否存在
+        const isFileExist = fs.existsSync(filePath);
 
-        // 将数据写入文件，追加模式
-        fs.appendFile(filePath, jsonData + '\n', (err) => {
+        // 将 JSON 数据转换为 CSV 格式
+        const csvData = parse(data, {
+            header: !isFileExist, // 如果文件不存在，添加表头
+        });
+
+        // 将 CSV 数据追加到文件
+        fs.appendFile(filePath, csvData + '\n', (err) => {
             if (err) {
                 console.error(`写入文件 ${filePath} 时出错:`, err);
             } else {
