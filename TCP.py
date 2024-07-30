@@ -127,7 +127,7 @@ async def send_heartbeat():
         print(f"发送心跳包: {message}")  # 打印发送的心跳包
         await broadcast_message_tcp(message)  # 广播心跳消息到所有TCP客户端
 
-# 主函数，启动 TCP 服务器和其他任务
+# 主函数，启动 TCP 服务器和其他任务12
 async def main():
     server = await asyncio.start_server(
         handle_client, '172.29.103.118', 8880)  # 启动TCP服务器

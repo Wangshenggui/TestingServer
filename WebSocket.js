@@ -111,7 +111,7 @@ const readDataAndBroadcast = () => {
     });
 };
 
-// 创建一个 WebSocket 服务器，监听在端口 8001
+// 创建一个 WebSocket 服务器，监听在端口 8001=
 const wss = new WebSocket.Server({ port: 8001 });
 
 // 监听新的客户端连接事件
