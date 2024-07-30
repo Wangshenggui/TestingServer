@@ -3,7 +3,7 @@ const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
 
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
-const dataArray = 0 ;
+const dataArray = "" ;
 // 获取运行文件的目录路径
 const getScriptDirectory = () => {
     return __dirname; // 使用 __dirname 获取当前脚本所在的目录路径
