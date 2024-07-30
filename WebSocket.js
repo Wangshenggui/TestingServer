@@ -32,9 +32,10 @@ const handleClient = (ws) => {
                 } else {
                     // 处理普通消息
                     broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
-
+                    //分割数据
                     const fields = parsedMessage.split(',');
-                    const combinedData = fields[0] + ',' + fields[1];
+                    //解析JSON数据
+                    const combinedData = fields[0].lon + ',' + fields[1].lat;
                     // 将解析后的消息保存到文件
                     saveDataToTextFile(combinedData);
                 }
