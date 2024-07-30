@@ -33,8 +33,10 @@ const handleClient = (ws) => {
                     // 处理普通消息
                     broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
 
+                    const fields = parsedMessage.split(',');
+                    const combinedData = fields[0] + ',' + fields[1];
                     // 将解析后的消息保存到文件
-                    saveDataToTextFile(parsedMessage);
+                    saveDataToTextFile(combinedData);
                 }
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
