@@ -35,7 +35,8 @@ const handleClient = (ws) => {
                     //分割数据
                     const fields = parsedMessage.split(',');
                     //解析JSON数据
-                    const combinedData = fields[0].lon + ',' + fields[1].lat;
+                    
+                    const combinedData = fields[0] + ',' + fields[1];
                     // 将解析后的消息保存到文件
                     saveDataToTextFile(combinedData);
                 }
