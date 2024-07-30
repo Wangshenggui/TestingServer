@@ -24,7 +24,7 @@ const handleClient = (ws) => {
             console.log(`收到来自客户端 ${addr} 的消息: ${message}`); // 打印收到的消息
             try {
                 const parsedMessage = JSON.parse(message); // 尝试解析收到的 JSON 消息
-				
+
                 // 检查消息是否以 'read' 开头
                 if (parsedMessage.command && parsedMessage.command === 'read') {
                     // 如果消息的 'command' 字段是 'read'，则读取文件并广播
@@ -51,8 +51,6 @@ const handleClient = (ws) => {
         connectedClients.delete(ws); // 从集合中移除已断开的客户端
     });
 };
-
-
 
 // 广播消息给所有已连接的客户端
 const broadcastMessage = (message) => {
@@ -116,7 +114,7 @@ const readDataAndBroadcast = () => {
     });
 };
 
-// 创建一个 WebSocket 服务器，监听在端口 8001=
+// 创建一个 WebSocket 服务器，监听在端口 8001
 const wss = new WebSocket.Server({ port: 8001 });
 
 // 监听新的客户端连接事件
