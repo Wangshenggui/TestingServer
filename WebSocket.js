@@ -3,7 +3,7 @@ const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
 
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
-
+const dataArray = 0 ;
 // 获取运行文件的目录路径
 const getScriptDirectory = () => {
     return __dirname; // 使用 __dirname 获取当前脚本所在的目录路径
@@ -29,15 +29,19 @@ const handleClient = (ws) => {
                 if (parsedMessage.command && parsedMessage.command === 'read') {
                     // 如果消息的 'command' 字段是 'read'，则读取文件并广播
                     readDataAndBroadcast();
-                } else {
+                } 
+                else if (parsedMessage.command && parsedMessage.command === 'write') {
+                    // 如果消息的 'command' 字段是 'read'，则读取文件并广播
+                    saveDataToTextFile(dataArray[0] + ',' +dataArray[1]);
+                } 
+                else {
+
                     // 处理普通消息
                     broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
                     //解析JSON数据
-                    const dataArray = Object.values(parsedMessage);
+                    dataArray = Object.values(parsedMessage);
                     //合并数据
-                    combinedData = dataArray[0] + ',' +dataArray[1];
-                    // 将解析后的消息保存到文件
-                    saveDataToTextFile(combinedData);
+                    
                 }
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
