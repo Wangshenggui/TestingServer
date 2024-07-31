@@ -1,7 +1,7 @@
 const WebSocket = require('ws'); // 引入 WebSocket 库
 const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
-
+let lastReceivedData = null;
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
 
 // 获取运行文件的目录路径
@@ -24,7 +24,7 @@ const handleClient = (ws) => {
             console.log(`收到来自客户端 ${addr} 的消息: ${message}`); // 打印收到的消息
             try {
                 const parsedMessage = JSON.parse(message); // 尝试解析收到的 JSON 消息
-
+                const dataArray = Object.values(parsedMessage);
                 // 检查消息是否以 'read' 开头
                 if (parsedMessage.command && parsedMessage.command === 'read') {
                     // 如果消息的 'command' 字段是 'read'，则读取文件并广播
@@ -33,14 +33,17 @@ const handleClient = (ws) => {
                 else {
                     // 处理普通消息
                     broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
-                    //解析JSON数据
-                    const dataArray = Object.values(parsedMessage);
-                    //合并数据
-                    if (parsedMessage.command && parsedMessage.command === 'write') {
-                        // 如果消息的 'command' 字段是 'read'，则读取文件并广播
-                        saveDataToTextFile(dataArray[0] + ',' +dataArray[1]);
+                    
                     } 
-
+                    //合并数据
+                if (parsedMessage.command && parsedMessage.command === 'write') {
+                        // 如果消息的 'command' 字段是 'read'，则读取文件并广播
+            
+                    saveDataToTextFile(lastReceivedData); //发送上一次数据   
+                   
+                }
+                else{
+                        lastReceivedData=dataArray[0] + ',' +dataArray[1];//保存上一次数据
                 }
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
