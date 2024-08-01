@@ -131,16 +131,16 @@ const readDataAndBroadcast = () => {
 };
 
 const readDatescv = () => {
-    const fs = require('fs');
-    const csv = require('csv-parser');
-    const scriptDirectory = (__dirname,'Data','data.csv'); // 获取脚本所在目录路径
+    const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
+    const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
-    fs.createReadStream(scriptDirectory)
+    fs.createReadStream(filePath)
         .pipe((csv))
         .on('data', (row) => {
             console.log(row);  // 输出每一行数据
             // 在这里可以对每一行数据进行处理
-            broadcastMessage(row)
+            const jsonObject = JSON.parse(row)
+            broadcastMessage(jsonObject)
         })
         .on('end', () => {
             console.log('CSV file successfully processed');
