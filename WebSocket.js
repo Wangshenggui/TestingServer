@@ -142,9 +142,9 @@ const readDatescsv = () => {
     fs.createReadStream(filePath)
         .pipe(csv()) // 实例化 csv-parser，并作为管道操作的一部分
         .on('data', (row) => {
-            console.log(row);  // 输出每一行数据
+            const shuju = console.log(row);  // 输出每一行数据
             // 在这里可以对每一行数据进行处理，row 是一个对象，不需要 JSON.parse
-            broadcastMessage(row); // 假设 broadcastMessage 函数可以处理每行数据
+            broadcastMessage(shuju); 
         })
         .on('end', () => {
             console.log('CSV file successfully processed');
