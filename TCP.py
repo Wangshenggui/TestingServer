@@ -85,7 +85,7 @@ async def send_message_to_websocket(message):
 
 # 处理从 WebSocket 服务器接收到的消息
 async def handle_websocket_message(message):
-    # print(f"收到来自 WebSocket 服务器的消息: {message}")  # 打印收到的WebSocket消息
+    print(f"收到来自 WebSocket 服务器的消息: {message}")  # 打印收到的WebSocket消息
     try:
         json_message = json.loads(message)  # 尝试解析JSON消息
         # 检查消息中是否包含特定键，如果包含则广播到 TCP 客户端
@@ -100,7 +100,6 @@ async def handle_websocket_message(message):
         # elif "4js" in json_message:
         #     global lon_message2
         #     lon_message2 = message
-        print(message)
     except json.JSONDecodeError as e:
         print(f"解析 WebSocket 消息时发生错误: {e}")  # 打印解析JSON消息时的错误信息
         
