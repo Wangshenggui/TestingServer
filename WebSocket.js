@@ -130,11 +130,12 @@ const readDataAndBroadcast = () => {
     });
 };
 
-const fs = require('fs');
-const csv = require('csv-parser');
-const path = require('path');
+
 
 const readDatescsv = () => {
+    const fs = require('fs');
+    const csv = require('csv-parser');
+    const path = require('path');
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
