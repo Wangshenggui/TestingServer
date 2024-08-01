@@ -97,11 +97,13 @@ async def handle_websocket_message(message):
         elif "lon" in json_message:
             global lon_message
             lon_message = message  # 存储包含"lon"的消息到全局变量
-        elif "4js" in json_message:
-            global lon_message2
-            lon_message2 = message
+        # elif "4js" in json_message:
+        #     global lon_message2
+        #     lon_message2 = message
+        print(message)
     except json.JSONDecodeError as e:
         print(f"解析 WebSocket 消息时发生错误: {e}")  # 打印解析JSON消息时的错误信息
+        
 
 # WebSocket 客户端连接和消息处理
 async def websocket_client():
