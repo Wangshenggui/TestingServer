@@ -45,7 +45,7 @@ const handleClient = (ws) => {
                 }
                 if(parsedMessage.command && parsedMessage.command === 'updata') {
 
-                    readDatescv();
+                    readDatescsv();
                 }
                 else{
                         lastReceivedData=dataArray[0] + ',' +dataArray[1];//保存上一次数据
@@ -130,19 +130,20 @@ const readDataAndBroadcast = () => {
     });
 };
 
-const readDatescv = () => {
-    const fs = require('fs');
-    const csv = require('csv-parser');
+const fs = require('fs');
+const csv = require('csv-parser');
+const path = require('path');
+
+const readDatescsv = () => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
     fs.createReadStream(filePath)
-        .pipe((csv))
+        .pipe(csv()) // 实例化 csv-parser，并作为管道操作的一部分
         .on('data', (row) => {
             console.log(row);  // 输出每一行数据
-            // 在这里可以对每一行数据进行处理
-            const jsonObject = JSON.parse(row); // 解析 JSON 字符串
-            broadcastMessage(jsonObject)
+            // 在这里可以对每一行数据进行处理，row 是一个对象，不需要 JSON.parse
+            broadcastMessage(row); // 假设 broadcastMessage 函数可以处理每行数据
         })
         .on('end', () => {
             console.log('CSV file successfully processed');
