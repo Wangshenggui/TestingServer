@@ -108,7 +108,7 @@ const saveDataToTextFile = (data) => {
 // 读取数据文件并广播到所有客户端
 const readDataAndBroadcast = () => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
-    const filePath = path.join(scriptDirectory, 'Data', 'data.txt'); // 构建文件路径
+    const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
@@ -133,7 +133,7 @@ const readDataAndBroadcast = () => {
 const readDatescv = () => {
     const fs = require('fs');
     const csv = require('csv-parser');
-    const scriptDirectory = (getScriptDirectory(),'Data','data.csv'); // 获取脚本所在目录路径
+    const scriptDirectory = (__dirname,'Data','data.csv'); // 获取脚本所在目录路径
 
     fs.createReadStream(scriptDirectory)
         .pipe((csv))
