@@ -146,10 +146,11 @@ const readDatescsv = () => {
             // 在这里可以对每一行数据进行处理，row 是一个对象，不需要 JSON.parse
             const jsonData = JSON.stringify(shuju);
             broadcastMessage(jsonData);
-            console.log(jsonData) ;
+            
         })
         .on('end', () => {
             console.log('CSV file successfully processed');
+            console.log(jsonData) ;
         });
 }
 
