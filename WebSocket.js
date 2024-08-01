@@ -133,7 +133,7 @@ const readDataAndBroadcast = () => {
 const readDatescv = () => {
     const fs = require('fs');
     const csv = require('csv-parser');
-    const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
+    const scriptDirectory = (getScriptDirectory(),'Data','data.csv'); // 获取脚本所在目录路径
 
     fs.createReadStream(scriptDirectory)
         .pipe((csv))
