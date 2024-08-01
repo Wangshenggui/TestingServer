@@ -131,6 +131,8 @@ const readDataAndBroadcast = () => {
 };
 
 const readDatescv = () => {
+    const fs = require('fs');
+    const csv = require('csv-parser');
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
@@ -139,7 +141,7 @@ const readDatescv = () => {
         .on('data', (row) => {
             console.log(row);  // 输出每一行数据
             // 在这里可以对每一行数据进行处理
-            const jsonObject = JSON.parse(row)
+            const jsonObject = JSON.parse(row); // 解析 JSON 字符串
             broadcastMessage(jsonObject)
         })
         .on('end', () => {
