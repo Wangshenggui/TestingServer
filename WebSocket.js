@@ -1,8 +1,9 @@
 const WebSocket = require('ws'); // 引入 WebSocket 库
 const fs = require('fs'); // 引入 fs 模块用于文件操作
 const path = require('path'); // 引入 path 模块用于路径操作
-
+let lastReceivedData = null;
 const connectedClients = new Set(); // 创建一个集合，用于存储所有已连接的客户端
+
 
 // 获取运行文件的目录路径
 const getScriptDirectory = () => {
@@ -24,13 +25,32 @@ const handleClient = (ws) => {
             console.log(`收到来自客户端 ${addr} 的消息: ${message}`); // 打印收到的消息
             try {
                 const parsedMessage = JSON.parse(message); // 尝试解析收到的 JSON 消息
-                broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
+                const dataArray = Object.values(parsedMessage);
+                // 检查消息是否以 'read' 开头
+                if (parsedMessage.command && parsedMessage.command === 'read') {
+                    // 如果消息的 'command' 字段是 'read'，则读取文件并广播
+                    readDataAndBroadcast();
+                } 
+                else {
+                    // 处理普通消息
+                    broadcastMessage(parsedMessage); // 广播解析后的消息给所有客户端
+                    
+                    } 
+                    //合并数据
+                if (parsedMessage.command && parsedMessage.command === 'write') {
+                        // 如果消息的 'command' 字段是 'read'，则读取文件并广播
+            
+                    saveDataToTextFile(lastReceivedData); //发送上一次数据并进行保存  
+                   
+                }
+                if(parsedMessage.command && parsedMessage.command === 'updata') {
 
-                // 将解析后的消息保存到文件
-                saveDataToTextFile(parsedMessage);
+                    readDatescsv();
+                }
+                else{
+                        lastReceivedData=dataArray[0] + ',' +dataArray[1];//保存上一次数据
+                }
 
-                // 读取文件中的数据并广播给所有客户端
-                readDataAndBroadcast();
             } catch (error) {
                 console.error(`解析客户端 ${addr} 的消息时出错: ${error}`); // 打印解析消息时的错误信息
             }
@@ -47,8 +67,6 @@ const handleClient = (ws) => {
     });
 };
 
-
-
 // 广播消息给所有已连接的客户端
 const broadcastMessage = (message) => {
     for (const client of connectedClients) { // 遍历所有已连接的客户端
@@ -63,7 +81,7 @@ const broadcastMessage = (message) => {
 const saveDataToTextFile = (data) => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
     const directoryPath = path.join(scriptDirectory, 'Data'); // 构建 Data 文件夹的路径
-    const filePath = path.join(directoryPath, 'data.txt'); // 文本文件路径
+    const filePath = path.join(directoryPath, 'data.csv'); // 文本文件路径
 
     // 确保文件夹存在
     fs.mkdir(directoryPath, { recursive: true }, (err) => {
@@ -86,10 +104,11 @@ const saveDataToTextFile = (data) => {
     });
 };
 
+
 // 读取数据文件并广播到所有客户端
 const readDataAndBroadcast = () => {
     const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
-    const filePath = path.join(scriptDirectory, 'Data', 'data.txt'); // 构建文件路径
+    const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
 
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
@@ -110,6 +129,32 @@ const readDataAndBroadcast = () => {
         }
     });
 };
+
+
+
+const readDatescsv = () => {
+    const fs = require('fs');
+    const csv = require('csv-parser');
+    const path = require('path');
+    const scriptDirectory = getScriptDirectory(); // 获取脚本所在目录路径
+    const filePath = path.join(scriptDirectory, 'Data', 'data.csv'); // 构建文件路径
+    let dataArray = [];
+    fs.createReadStream(filePath)
+        .pipe(csv()) // 实例化 csv-parser，并作为管道操作的一部分
+        .on('data', (row) => {
+            const shuju = console.log(row);  // 输出每一行数据
+            // 在这里可以对每一行数据进行处理，row 是一个对象，不需要 JSON.parse
+            dataArray.push(row); 
+
+        })
+        .on('end', () => {
+            const jsonData = JSON.stringify(dataArray);
+            broadcastMessage(jsonData);
+            console.log('CSV file successfully processed'); 
+            console.log(jsonData);
+        });
+    
+}
 
 // 创建一个 WebSocket 服务器，监听在端口 8001
 const wss = new WebSocket.Server({ port: 8001 });
