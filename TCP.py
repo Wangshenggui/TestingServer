@@ -107,7 +107,7 @@ async def handle_websocket_message(message):
 # WebSocket 客户端连接和消息处理
 async def websocket_client():
     global websocket_connection
-    uri = "ws://8.137.81.229:8001"  # WebSocket服务器的URI
+    uri = "ws://47.109.46.41:8001"  # WebSocket服务器的URI
     while True:
         try:
             # 连接到WebSocket服务器
@@ -134,7 +134,7 @@ async def send_heartbeat():
 # 主函数，启动 TCP 服务器和其他任务12
 async def main():
     server = await asyncio.start_server(
-        handle_client, '172.29.103.118', 8000)  # 启动TCP服务器
+        handle_client, '172.29.103.119', 8000)  # 启动TCP服务器
 
     addr = server.sockets[0].getsockname()  # 获取服务器的监听地址
     print(f"服务器已启动，监听在 {addr}")  # 打印服务器启动信息
